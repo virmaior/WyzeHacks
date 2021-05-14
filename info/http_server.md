@@ -7,10 +7,16 @@
     So I did some quick analysis on the http server. It's using a software called "boa". The server will allow you download any files in the SD card, as long as you know the path. The SD card is symbolic linked as "/tmp/www/SDPath", where "/tmp/www" is the document root directory of the http service. This means, for example, to download file "alarm/20200403/20200403_10_00_25.jpg", you will need to browse to "http://\<ipaddress\>/SDPath/alarm/20200403/20200403_17_00_25.jpg"
 
     This will be very useful to access the recordings on SD card. However, requiring knowlege of the file path makes this useless. Luckily, there is something else: There is a CGI script, called "hello.cgi" allowing you to browse "any" directory on the camera. So you need to specify a "name" parameter as the path of the directory, relative to the SD card root. So if I do "http://\<ipaddress\>/cgi-bin/hello.cgi?name=/alarm/20200403/", it will list all the files and sub-directories under that directory.
+    
+    At least on wyze v3 (05/2021), the boa webserver is not (always?) on by default. It can be activated by copying its configuration file into tmp and starting it:
+    cp /usr/boa/boa.conf /tmp/boa.conf
+    /usr/boa/boa /media/mmc
 
 * Automated SD card content downloading
   
-    By combining the "hello.cgi" and the web server, we can build a simple script iterating all the directories and then download all the files. There is really no complexity of this script other than a nice user interface.
+    By combining the "hello.cgi" and the web server, we can build a simple script iterating all the directories and then download all the files. There is really no complexity of this script other than a nice user interface. 
+    
+    As a trivial example, https://github.com/virmaior/zakkun-the-wyze/blob/main/za-toru.sh shows how to download the single minute clips for an entire day based on the default directory structure. improvements could be made by correctly scanning using hello.cgi and by prompting the user for the ip address, date, and password.
 
 * Security concerns
    
